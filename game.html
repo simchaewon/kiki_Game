@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title> kiki game main </title>
+  <style>
+    body,html{  width:100%;  height:100%;  }
+    body,section,h1,button{  margin: 0; padding: 0; }
+    img{  display:block;  }
+    button{  border:0;  background:transparent; }
+    body{  
+      background:#0c3150;  display:flex; justify-content:center; align-items:center; 
+      overflow:hidden;
+    }
+    section{
+      width:1024px; height:768px; background:#fffff6; border:1px solid #222;
+    }
+    .play{   position:relative;   }
+    .play>h2{  width:200px;  height:200px; margin:12px auto 0px; }
+    .play>h2>img{ width: 200px; height: 200px; }
+    .play>.play_area{
+      width:512px; height:332px; margin:108px auto 0; display:flex; flex-flow:row wrap;
+      justify-content:space-between; align-content:space-between; column-gap:115px;
+    }
+    .play>.play_area>div{ 
+      width:94px;  height:92px;  background:url("images/gigi_hide.png") no-repeat;  position:relative;
+    }
+
+    .play>.play_area>div>.gigi{  width:100%;  height:100%; /* overflow:hidden */}
+    .play>.play_area>div>.gigi>img{
+      display:none; 
+        width:94px;  height:auto;  position:absolute;  left:0;  bottom:9px;
+      }
+    .play>.score{
+      width:200px;  padding-top:40px;  text-align:center;  font-size:40px; 
+      font-weight:bold; color:rgb(62, 192, 69); 
+      background:url("images/SCORE.png") no-repeat center top;
+      position:absolute; left:150px;  top:110px;
+    }
+    .play>.time{
+      width:120px;  padding-top:40px; text-align:center; font-size:40px;
+      font-weight: bold; color:#d32828;  
+      background:url("images/TIME.png") no-repeat center top;
+      position:absolute; right:150px;  top:110px;
+    }
+    .end{  
+      display:block;   display:none;
+      background:#fffff6 url("images/end_bottom.png") no-repeat center bottom;
+ 
+    }
+    .end>h2{  width:238px; height:113px;  margin:27px auto 0; }
+    .end>h2>img{ width: 200px; height: 200px; text-align: center; }
+    .end>.score{
+      width:172px;  padding-top:70px;  background:url("images/SCORE.png") no-repeat;
+      text-align:center;  font-weight:bold;  font-size:64px;  color:rgb(95, 148, 97);
+      margin:46px auto 60px; margin-bottom: 40px;
+    }
+    .end>.again{
+      width:277px;  height:47px;  display:block;  margin:0 auto;  display:flex; justify-content: center;  align-items: center;
+    }
+   
+    .hammer{
+      position:absolute;  left:0px;  top:0px;  z-index:100;  pointer-events:none;
+      transition:transform 0.05s;
+    }
+    .hammer>img{  width:150px;  height:auto;  margin:-150px 0 0 60px;  }
+  </style>
+</head>
+<body>
+  <section class="play">
+    <h2><img src="images/face1.png" alt="kiki"></h2>
+    <div class="play_area">
+      <div class="m1">
+        <div class="gigi"><img src="images/gigi.show.png" alt=""></div>
+      </div>
+      <div class="m2">
+        <div class="gigi"><img src="images/gigi.show.png" alt=""></div>
+      </div>
+      <div class="m3">
+        <div class="gigi"><img src="images/gigi.show.png" alt=""></div>
+      </div>
+      <div class="m4">
+        <div class="gigi"><img src="images/gigi.show.png" alt=""></div>
+      </div>
+      <div class="m5">
+        <div class="gigi"><img src="images/gigi.show.png" alt=""></div>
+      </div>
+      <div class="m6">
+        <div class="gigi"><img src="images/gigi.show.png" alt=""></div>
+      </div>
+      <div class="m7">
+        <div class="gigi"><img src="images/gigi.show.png" alt=""></div>
+      </div>
+      <div class="m8">
+        <div class="gigi"><img src="images/gigi.show.png" alt=""></div>
+      </div>
+      <div class="m9">
+        <div class="gigi"><img src="images/gigi.show.png" alt=""></div>
+      </div>
+    </div>
+    <p class="score">0</p>
+    <p class="time">0</p>
+  </section>
+  <section class="end"> 
+    <h2><img src="images/face1.png" alt="kiki"></h2>
+    <p class="score">0</p>
+    <button class="again"><img src="images/again.png" alt="again"></button>
+  </section>
+  <span class="hammer"><img src="images/hammer.png" alt=""></span>
+
+  <script>
+    const hammer = document.querySelector('.hammer');
+    hammer.style.display = 'none';
+
+    const countDownDisplay = document.createElement('div');
+    countDownDisplay.classList.add('countdown');
+    countDownDisplay.style.position = 'fixed';
+    /*
+    countDownDisplay.style.top = '50%';
+    countDownDisplay.style.left = '50%';
+    countDownDisplay.style.transform = 'translate(-50%,-50%)';
+    */
+    countDownDisplay.style.top = '0px';
+    countDownDisplay.style.left = '0px';
+    countDownDisplay.style.width = '100vw';
+    countDownDisplay.style.height = '100vh';
+    countDownDisplay.style.zIndex = '10000';
+    countDownDisplay.style.backgroundColor = 'rgba(0,0,0,0.7)';
+    countDownDisplay.style.display = 'flex';
+    countDownDisplay.style.justifyContent = 'center';
+    countDownDisplay.style.alignItems = 'center';
+    countDownDisplay.style.fontSize = '100px';
+    countDownDisplay.style.color = '#fffff6';
+    countDownDisplay.style.fontWeight = 'bold';
+    document.body.appendChild( countDownDisplay );   
+
+    let countDown = 5; 
+    //document.body.style.filter = `brightness(${100-countDown*20}%)`;
+    const InitCountDown = ()=>{
+        countDownDisplay.innerHTML = countDown;        
+        countDown--;
+        //document.body.style.filter = `brightness(${100-countDown*20}%)`;
+        if( countDown<0 ){ // ==-1
+          countDownDisplay.innerHTML = 'START'
+        }
+        if( countDown<-1 ){
+          clearInterval( countDownInterval );
+          startGame();
+          document.body.style.filter = 'none';
+        }
+    }
+    InitCountDown();
+    let countDownInterval = setInterval( InitCountDown , 1000 );
+    let playTime = 10;
+    let gameScore = 0;
+    let timer;
+    const time = document.querySelector('.time');
+    const score = document.querySelector('.score');
+    const playArea = document.querySelector('.play');
+    const resultArea = document.querySelector('.end');
+    let nameNum = 0; // 개체 구분 이름정의 변수 (랜덤 1~9)
+    let clickable = false; // 연속클릭 방지 상태변수
+    let targetTimer;
+    score.innerHTML = gameScore*10;
+
+    const startGame=()=>{
+      hammer.style.display = 'block';
+      countDownDisplay.style.display='none';
+      //countDownDisplay.remove();
+      time.innerHTML = playTime;
+      const countDownTimer =()=>{
+        playTime--;
+        time.innerHTML = playTime;
+        if( playTime === 0 ){
+          clearInterval(timer);
+          clearInterval(targetTimer);
+          playArea.style.display = 'none';
+          resultArea.style.display = 'block';
+          document.querySelector('.end .score').innerHTML = gameScore*10;
+          document.body.style.cursor = 'default';
+          hammer.style.display = 'none';
+        }
+      }
+      timer = setInterval( countDownTimer, 1000);
+
+      const randomTarget =()=>{
+        nameNum = Math.ceil( Math.random()*9 );/* 1~9 랜덤정의:Math.floor(Math.random()*9)+1 */
+        const target = document.querySelector(`.m${nameNum} img`);
+        console.log( nameNum );
+        target.style.display = 'block';
+        clickable = true;
+        setTimeout(()=>{ target.style.display = 'none';  },800);
+        setTimeout(()=>{ clickable = false;              },700);
+      }
+      targetTimer = setInterval(randomTarget,900);
+
+      document.querySelectorAll('.gigi>img').forEach((img)=>{
+        img.addEventListener('click',()=>{
+          if( clickable ){
+            gameScore++;
+            score.innerHTML = gameScore*10;
+            clickable = false;
+          }
+        });
+      });
+
+      /*  hammer 움직임 */
+      document.body.style.cursor = 'none';
+      document.addEventListener('mousemove', (e)=>{      
+        hammer.style.left = e.clientX+'px';
+        hammer.style.top = e.clientY+'px';
+      });
+      document.addEventListener('mousedown', ()=>{
+        hammer.style.transform = 'rotate(-68deg)';
+        setTimeout(()=>{ hammer.style.transform = 'rotate(0deg)'; },120);
+      });      
+    }
+
+    document.querySelector('.end>.again').addEventListener('click',()=>{
+      gameScore = 0;
+      playTime = 10;
+      clickable = false;
+      countDown = 5;
+      playArea.style.display = 'block';
+      score.innerHTML = 0;
+      resultArea.style.display = 'none';
+      countDownDisplay.style.display='flex';
+      InitCountDown();
+      countDownInterval = setInterval( InitCountDown , 1000 );
+    });
+  </script>
+</body>
+</html>

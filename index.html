@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title> kiki game index </title>
+  <style>
+    body,html{  width:100%;  height:100%;  }
+    body,section,h1,button{  margin: 0; padding: 0; }
+    img{  display:block; }
+    body{  
+      background:#0c3150;  display:flex; justify-content:center; align-items:center; 
+    }
+    section{
+      background:#fffff6; border:1px solid #222; width:1024px; height:768px;
+      display:flex; flex-flow:column nowrap; justify-content:center; align-items:center;
+      gap:40px;
+    }
+    button{
+      border:0px;  background:transparent;  cursor:pointer;
+    }
+    h1>img{
+      width: 300px auto; margin-bottom: 30px;
+    }
+  </style>
+</head>
+<body>
+  <section>
+    <h1><img src="images/face1.png" alt="kiki"></h1>
+    <button class="start"><img src="images/PLAY.png" alt="play"></button>
+  </section>
+  <script>
+    document.querySelector('.start').addEventListener('click',()=>{
+      window.location.href='game.html';
+    });
+  </script>
+</body>
+</html>
